@@ -3,21 +3,21 @@ require('dotenv').config();
 
 
 // Import express and request modules and urlencoded parsers
-var express = require('express');
-var request = require('request');
-var bodyParser = require('body-parser');
+var express     = require('express');
+var request     = require('request');
+var bodyParser  = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({limit: '10mb', extended: true});
 
 // Store our app's ID and Secret. These we got from Step 1. 
 // For this tutorial, we'll keep your API credentials right here. But for an actual app, you'll want to  store them securely in environment variables. 
-var clientId = process.env.SLACKAPP_CLIENT_ID;
-var clientSecret = process.env.SLACKAPP_CLIENT_SECRET;
+var clientId    = process.env.SLACKAPP_CLIENT_ID;
+var clientSecret= process.env.SLACKAPP_CLIENT_SECRET;
 
-var app = express();
-const PORT=process.env.PORT;
+var app         = express();
+const port      = process.env.PORT || 8080;
+const data      = require('./data.js');
 
 app.use(bodyParser.urlencoded({extended: false}));
-
 
 
 // Lets start our server
@@ -72,7 +72,7 @@ app.post('/send-button', urlencodedParser, (req, res) =>{
         res.status(403).end("Access forbidden");
     }else{
         var message = {
-            "text": "This is your first interactive message",
+            "text": reqBody.user_name+", you typed: "+reqBody.text,
             "attachments": [
                 {
                     "text": "Building buttons is easy right?",
