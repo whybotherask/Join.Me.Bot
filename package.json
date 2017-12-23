@@ -1,0 +1,20 @@
+{
+  "name": "join.me slackbot",
+  "version": "1.0.0",
+  "description": "A bot that allows havas users to coordinate join.me requests",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.17.1",
+    "botkit": "^0.6.7",
+    "format-currency": "^1.0.0",
+    "mongoose": "^4.6.2",
+    "watson-developer-cloud": "^2.27.0"
+  },
+  "devDependencies": {}
+}
