@@ -3,22 +3,21 @@ require('dotenv').config();
 
 
 // Import express and request modules and urlencoded parsers
-var express     = require('express');
-var request     = require('request');
-var bodyParser  = require('body-parser');
-var urlencodedParser = bodyParser.urlencoded({limit: '10mb', extended: true});
+const express     = require('express');
+const request     = require('request');
+const data        = require('./data.js');
+const bodyParser  = require('body-parser');
+const urlencodedParser  = bodyParser.urlencoded({limit: '10mb', extended: true});
+const conversation      = require('./lib/watson-conversation.js');
 
-// Store our app's ID and Secret. These we got from Step 1. 
-// For this tutorial, we'll keep your API credentials right here. But for an actual app, you'll want to  store them securely in environment variables. 
-var clientId    = process.env.SLACKAPP_CLIENT_ID;
-var clientSecret= process.env.SLACKAPP_CLIENT_SECRET;
+// environment parameters
+const PORT        = process.env.PORT || 8080;
+const clientId    = process.env.SLACKAPP_CLIENT_ID;
+const clientSecret= process.env.SLACKAPP_CLIENT_SECRET;
 
-var app         = express();
-const port      = process.env.PORT || 8080;
-const data      = require('./data.js');
 
-app.use(bodyParser.urlencoded({extended: false}));
-
+// start app
+const app = express();
 
 // Lets start our server
 app.listen(PORT, function () {
@@ -26,11 +25,16 @@ app.listen(PORT, function () {
     console.log("Example app listening on port " + PORT);
 });
 
-
 // This route handles GET requests to our root ngrok address and responds with the same "Ngrok is working message" we used before
 app.get('/', function(req, res) {
     res.send('Ngrok is working! Path Hit: ' + req.url);
 });
+
+
+conversation.message({ text: 'what is available tomorrow between 09:00 to 10:00'})
+            .then( response => {
+                console.log(response)
+            });
 
 // This route handles get request to a /oauth endpoint. We'll use this endpoint for handling the logic of the Slack oAuth process behind our app.
 app.get('/oauth', function(req, res) {
