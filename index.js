@@ -4,12 +4,14 @@ require('dotenv').config();
 
 // Import express and request modules and urlencoded parsers
 const express     = require('express')
-const request     = require('request')
-const data        = require('./data.js')
 const bodyParser  = require('body-parser')
 const urlencodedParser  = bodyParser.urlencoded({limit: '10mb', extended: true})
-const conversation      = require('./lib/watson-conversation.js')
-const util        = require('./lib/util.js')
+
+const Moment      = require('moment')
+const Util        = require('./lib/util.js')
+const Controller  = require('./lib/controller.js')
+const Conversation= require('./lib/watson-conversation.js')
+
 
 // environment parameters
 const PORT        = process.env.PORT || 8080
@@ -20,10 +22,11 @@ const clientSecret= process.env.SLACKAPP_CLIENT_SECRET
 // start app
 const app = express()
 
+
 // Lets start our server
 app.listen(PORT, function () {
     //Callback triggered when server is successfully listening. Hurray!
-    console.log("Example app listening on port " + PORT)
+    console.log("/Join.Me listening on port " + PORT)
 });
 
 // This route handles GET requests to our root ngrok address and responds with the same "Ngrok is working message" we used before
@@ -59,10 +62,63 @@ app.get('/oauth', function(req, res) {
     }
 });
 
+
+
+
 // Route the endpoint that our slash command will point to and send back a simple response to indicate that ngrok is working
 app.post('/command', function(req, res) {
     res.send('Your ngrok tunnel is up and running!');
 });
+
+
+
+
+app.post('/joinme', urlencodedParser, (req, res) =>{
+
+    res.status(200).end() // best practice to respond with empty 200 status code
+
+    if (req.body.token != process.env.SLACK_VERIFICATION_TOKEN){
+        res.status(403).end("Access forbidden");
+        return;
+    }
+    
+    Conversation
+    .parse({ text: req.body.text })
+    .then( response=>{
+        console.log(response);
+        return Controller.process(response, req.body.user_name)   // process the request to get data
+    })
+    .then( data=>{
+        var message = Util.formatTextAttachment('I only know booked times:', data);
+        Util.sendMessageToSlackResponseURL(req.body.response_url, message);
+
+        var message = Util.formatTextAttachment('second message', data);
+        Util.sendMessageToSlackResponseURL(req.body.response_url, message);
+    });
+
+})
+
+
+
+app.post('/actions', urlencodedParser, (req, res) =>{
+    res.status(200).end() // best practice to respond with 200 status
+    var actionJSONPayload = JSON.parse(req.body.payload) // parse URL-encoded payload JSON string
+    var message = {
+        "text": actionJSONPayload.user.name+" clicked: "+actionJSONPayload.actions[0].name,
+        "replace_original": false
+    }
+    Util.sendMessageToSlackResponseURL(actionJSONPayload.response_url, message)
+})
+
+
+
+
+
+
+
+
+/*
+
 
 app.post('/send-button', urlencodedParser, (req, res) =>{
     res.status(200).end() // best practice to respond with empty 200 status code
@@ -108,60 +164,7 @@ app.post('/send-button', urlencodedParser, (req, res) =>{
     }
 })
 
-app.post('/joinme', urlencodedParser, (req, res) =>{
-
-    res.status(200).end() // best practice to respond with empty 200 status code
-
-    if (req.body.token != process.env.SLACK_VERIFICATION_TOKEN){
-        res.status(403).end("Access forbidden");
-        return;
-    }
-    
-    conversation
-    .parse({ text: req.body.text })
-    .then( response=>{
-        return util.process(response, req.body.user_name) // format to our data style
-    })
-    .then( json=>{
-        return data.process(json)   // process the request to get data
-    })
-    .then( data=>{
-        var message = util.formatTextAttachment('I only know booked times:', data);
-        sendMessageToSlackResponseURL(req.body.response_url, message);
-    });
-
-})
-
-app.post('/actions', urlencodedParser, (req, res) =>{
-    res.status(200).end() // best practice to respond with 200 status
-    var actionJSONPayload = JSON.parse(req.body.payload) // parse URL-encoded payload JSON string
-    var message = {
-        "text": actionJSONPayload.user.name+" clicked: "+actionJSONPayload.actions[0].name,
-        "replace_original": false
-    }
-    sendMessageToSlackResponseURL(actionJSONPayload.response_url, message)
-})
-
-
-function sendMessageToSlackResponseURL(responseURL, JSONmessage){
-    var postOptions = {
-        uri: responseURL,
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        json: JSONmessage
-    }
-    request(postOptions, (error, response, body) => {
-        if (error){
-        	console.log(error);
-            // handle errors as you see fit
-        }
-    })
-}
-
-
-
+*/
 
 /*
     How to do Bots
