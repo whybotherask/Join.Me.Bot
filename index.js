@@ -96,6 +96,7 @@ app.post('/joinme', urlencodedParser, (req, res) =>{
         return Controller.process(response, req.body.user_name)   // process the request to get data
     })
     .then( data=>{
+        console.log(data);
         var message = Util.formatTextAttachment('I only know booked times:', data);
         // Util.sendMessageToSlackResponseURL(req.body.response_url, message);
 
