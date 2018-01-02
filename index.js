@@ -88,7 +88,7 @@ app.post('/joinme', urlencodedParser, (req, res) =>{
         res.status(403).end("Access forbidden");
         return;
     }
-    
+
     Conversation
     .parse({ text: req.body.text })
     .then( response=>{
@@ -97,7 +97,7 @@ app.post('/joinme', urlencodedParser, (req, res) =>{
     })
     .then( data=>{
         var message = Util.formatTextAttachment('I only know booked times:', data);
-        Util.sendMessageToSlackResponseURL(req.body.response_url, message);
+        // Util.sendMessageToSlackResponseURL(req.body.response_url, message);
 
        // var message = Util.formatTextAttachment('second message', data);
        // Util.sendMessageToSlackResponseURL(req.body.response_url, message);
