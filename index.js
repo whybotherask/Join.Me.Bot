@@ -5,21 +5,17 @@ require('dotenv').config();
 // Import express and request modules and urlencoded parsers
 const express     = require('express')
 const bodyParser  = require('body-parser')
+const _           = require('underscore')
 const urlencodedParser  = bodyParser.urlencoded({limit: '10mb', extended: true})
 
-const Moment      = require('moment')
 const Util        = require('./lib/util.js')
 const Controller  = require('./lib/controller.js')
 const Conversation= require('./lib/watson-conversation.js')
-const Data        = require('./lib/data.js')
 
 // environment parameters
 const PORT        = process.env.PORT || 8080
 const clientId    = process.env.SLACKAPP_CLIENT_ID
 const clientSecret= process.env.SLACKAPP_CLIENT_SECRET
-
-
-var Meeting = require("./models/meeting.js");
 
 
 // start app
@@ -75,10 +71,6 @@ app.post('/command', function(req, res) {
 });
 
 
-// Data.add()
-
-
-
 
 app.post('/joinme', urlencodedParser, (req, res) =>{
 
@@ -95,13 +87,18 @@ app.post('/joinme', urlencodedParser, (req, res) =>{
         console.log(response);
         return Controller.process(response, req.body.user_name)   // process the request to get data
     })
-    .then( data=>{
-        console.log(data);
-        var message = Util.formatTextAttachment('I only know booked times:', data);
-        // Util.sendMessageToSlackResponseURL(req.body.response_url, message);
-
-       // var message = Util.formatTextAttachment('second message', data);
-       // Util.sendMessageToSlackResponseURL(req.body.response_url, message);
+    .then( messages=>{
+        console.log('messages', messages);
+        Util.sendMessageToSlackResponseURL(req.body.response_url, messages);
+        return ;
+        if ( _.isArray(messages) ){    // if array of messages, send each message at 1000 ms apart
+            _.each(messages, (message, index)=>{
+               setTimeout( Util.sendMessageToSlackResponseURL, index*1000, null, req.body.response_url, message);
+            });
+        }
+        else {
+           Util.sendMessageToSlackResponseURL(req.body.response_url, messages);
+        }
     });
 
 })
@@ -117,27 +114,6 @@ app.post('/actions', urlencodedParser, (req, res) =>{
     }
     Util.sendMessageToSlackResponseURL(actionJSONPayload.response_url, message)
 })
-
-
-
-
-
-
-
-// var query = {user: userId};
-// var update = {
-//     start:      '2018-02-10 14:00'
-//     end:        '2018-02-10 16:00'
-//     user:       'andy.lin'
-//     account:    'havastorux',     
-// }
-// var options = {upsert: true};
-// Meeting.findOneAndUpdate(query, update, options, function(err, mov) {
-//   if (err) {
-//     console.log("Database error: " + err);
-//   } else {
-//     message = {
-
 
 
 

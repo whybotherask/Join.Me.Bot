@@ -1,7 +1,6 @@
 
-
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+const mongoose 	= require("mongoose");
+const Schema 	= mongoose.Schema;
 
 var Meeting = new Schema({
 	_id: 		Schema.Types.ObjectId,
@@ -27,8 +26,6 @@ var Meeting = new Schema({
 
 
 module.exports = mongoose.model("Meetings", Meeting);
-// module.exports = mongoose.model("Dates", Dates);
-// module.exports = mongoose.model("Account", Account);
 
 
 
@@ -36,6 +33,3 @@ module.exports = mongoose.model("Meetings", Meeting);
 
 
 
-
-//  db.test.insert({date: ISODate()})
-// db.test.insert({date: new Date()})
