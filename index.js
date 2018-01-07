@@ -88,12 +88,9 @@ app.post('/joinme', urlencodedParser, (req, res) =>{
         return Controller.process(response, req.body.user_name)   // process the request to get data
     })
     .then( messages=>{
-        console.log('messages', messages);
-        Util.sendMessageToSlackResponseURL(req.body.response_url, messages);
-        return ;
         if ( _.isArray(messages) ){    // if array of messages, send each message at 1000 ms apart
             _.each(messages, (message, index)=>{
-               setTimeout( Util.sendMessageToSlackResponseURL, index*1000, null, req.body.response_url, message);
+               setTimeout( Util.sendMessageToSlackResponseURL, index*1800, req.body.response_url, message);
             });
         }
         else {
