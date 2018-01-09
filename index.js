@@ -116,58 +116,6 @@ app.post('/actions', urlencodedParser, (req, res) =>{
 
 })
 
-
-
-
-/*
-
-
-app.post('/send-button', urlencodedParser, (req, res) =>{
-    res.status(200).end() // best practice to respond with empty 200 status code
-    var reqBody = req.body
-    var responseURL = reqBody.response_url
-    if (reqBody.token != process.env.SLACK_VERIFICATION_TOKEN){
-        res.status(403).end("Access forbidden");
-    }else{
-        var message = {
-            "text": reqBody.user_name+", you typed: "+reqBody.text,
-            "attachments": [
-                {
-                    "text": "Building buttons is easy right?",
-                    "fallback": "Shame... buttons aren't supported in this land",
-                    "callback_id": "button_tutorial",
-                    "color": "#3AA3E3",
-                    "attachment_type": "default",
-                    "actions": [
-                        {
-                            "name": "yes",
-                            "text": "yes",
-                            "type": "button",
-                            "value": "yes"
-                        },
-                        {
-                            "name": "no",
-                            "text": "no",
-                            "type": "button",
-                            "value": "no"
-                        },
-                        {
-                            "name": "maybe",
-                            "text": "maybe",
-                            "type": "button",
-                            "value": "maybe",
-                            "style": "danger"
-                        }
-                    ]
-                }
-            ]
-        }
-        sendMessageToSlackResponseURL(responseURL, message)
-    }
-})
-
-*/
-
 /*
     How to do Bots
     https://olegkorol.de/2017/04/23/Creating-a-smart-ChatBot-for-Slack/
@@ -175,4 +123,10 @@ app.post('/send-button', urlencodedParser, (req, res) =>{
     How to do Slash Commands
     https://api.slack.com/tutorials/intro-to-message-buttons
  */
+
+
+
+
+
+ 
 
