@@ -1,5 +1,5 @@
 {
-  "name": "join me slackbot",
+  "name": "join_me_slackbot",
   "version": "1.0.0",
   "description": "A bot that allows havas users to coordinate join.me requests",
   "main": "index.js",
