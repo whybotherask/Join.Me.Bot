@@ -3,8 +3,4 @@
 node_modules
 _DS_Store
 ngrok
-lib/z-data.js
-
-lib/z-controller.js
-
-lib/z-watson-conversation.js
+_design
